@@ -1,0 +1,104 @@
+# Heart Disease Prediction App - Ngrok Deployment Setup
+================================================================
+
+## Prerequisites
+- Python 3.8+
+- Git repository with the Heart Disease project
+- Ngrok account (free tier works)
+
+## Step 1: Install Required Dependencies
+```bash
+cd /workspaces/Heart-Disease-Project
+pip install streamlit plotly seaborn scikit-learn joblib pandas numpy matplotlib
+```
+
+## Step 2: Install Ngrok
+```bash
+# Add ngrok repository
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+
+# Update and install
+sudo apt update
+sudo apt install ngrok
+```
+
+## Step 3: Configure Ngrok Authentication
+1. Sign up for free ngrok account: https://dashboard.ngrok.com/signup
+2. Get your authtoken from: https://dashboard.ngrok.com/get-started/your-authtoken
+3. Add your token:
+```bash
+ngrok config add-authtoken YOUR_NGROK_TOKEN_HERE
+```
+
+## Step 4: Start the Streamlit App
+```bash
+cd /workspaces/Heart-Disease-Project/ui
+streamlit run app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+```
+
+## Step 5: Create Public Tunnel
+In a new terminal:
+```bash
+ngrok http 8501
+```
+
+## Expected Output
+After running ngrok, you should see output similar to:
+```
+Session Status                online
+Account                       your-email@example.com (Plan: Free)
+Version                       3.30.0
+Region                        Europe (eu)
+Web Interface                 http://127.0.0.1:4040
+Forwarding                    https://your-unique-id.ngrok-free.dev -> http://localhost:8501
+```
+
+## Access Your App
+- **Public URL:** The forwarding URL shown in ngrok output
+- **Local URL:** http://localhost:8501
+- **Ngrok Dashboard:** http://127.0.0.1:4040
+
+## Features Available
+✅ Real-time heart disease prediction (5 severity levels)
+✅ Interactive data visualizations
+✅ Dataset exploration and insights
+✅ User-friendly input forms
+✅ Confidence scoring and risk assessment
+
+## Troubleshooting
+
+### App Errors
+If you see prediction errors about feature count:
+- The app automatically handles feature selection (13 → 10 features)
+- Ensure the model file exists at `/workspaces/Heart-Disease-Project/models/final_model.pkl`
+
+### Ngrok Issues
+- **Authentication Error:** Verify your authtoken is correctly added
+- **Port Busy:** Kill existing processes: `pkill -f streamlit`
+- **Connection Issues:** Check if Streamlit is running on port 8501
+
+### Streamlit Issues
+- **Module Not Found:** Reinstall dependencies
+- **Port Error:** Change port with `--server.port 8502`
+- **File Not Found:** Verify paths in app.py match your directory structure
+
+## Stopping the Services
+```bash
+# Stop Streamlit
+pkill -f streamlit
+
+# Stop Ngrok (Ctrl+C in ngrok terminal)
+```
+
+## Production Notes
+- Free ngrok URLs change on restart
+- For permanent URLs, consider ngrok paid plans
+- Monitor resource usage on free tier
+- Consider using proper deployment platforms for production
+
+## Example Successful Deployment
+Last successful deployment:
+- Public URL: https://sensuously-soapier-rheba.ngrok-free.dev
+- Date: September 27, 2025
+- Status: ✅ Online and functional
