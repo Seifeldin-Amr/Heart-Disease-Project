@@ -9,7 +9,180 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 import warnings
+import subprocess
+import threading
+import time
+import requests
+import json
+import os
+import sys
 warnings.filterwarnings('ignore')
+
+# Auto-start streamlit and ngrok functionality
+def auto_start_streamlit():
+    """Automatically start streamlit if not running"""
+    try:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+        return get_script_run_ctx() is not None
+    except:
+        return False
+
+# If not running in streamlit context, auto-launch
+if __name__ == "__main__" and not auto_start_streamlit():
+    print("🚀 Auto-launching Heart Disease Prediction App...")
+    print("📱 Creating public URL automatically...")
+    print("-" * 50)
+    
+    import subprocess
+    import os
+    
+    # Start streamlit in the background
+    process = subprocess.Popen([
+        "streamlit", "run", __file__, 
+        "--server.port", "8501", 
+        "--server.address", "0.0.0.0",
+        "--server.headless", "true"
+    ])
+    
+    # Wait a moment for streamlit to start
+    time.sleep(3)
+    
+    # Start ngrok and get public URL
+    ngrok_process = subprocess.Popen([
+        "ngrok", "http", "8501"
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    
+    # Wait for ngrok to establish tunnel
+    print("🔄 Setting up public access...")
+    for attempt in range(15):
+        time.sleep(1)
+        try:
+            response = requests.get("http://127.0.0.1:4040/api/tunnels")
+            if response.status_code == 200:
+                tunnels = response.json()
+                if tunnels.get('tunnels'):
+                    public_url = tunnels['tunnels'][0]['public_url']
+                    print("✅ SUCCESS! App is now live:")
+                    print(f"🌐 PUBLIC URL: {public_url}")
+                    print(f"📍 LOCAL URL:  http://localhost:8501")
+                    print(f"⚡ NGROK DASH: http://127.0.0.1:4040")
+                    print("-" * 50)
+                    print("💡 App is running! Share the PUBLIC URL above.")
+                    print("⏹️  Press Ctrl+C to stop")
+                    break
+        except:
+            continue
+    else:
+        print("⚠️  Could not create public URL automatically")
+        print("📍 LOCAL URL: http://localhost:8501")
+        print("💡 Try running 'ngrok http 8501' manually")
+    
+    try:
+        # Keep the script running
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\n🛑 Stopping services...")
+        process.terminate()
+        ngrok_process.terminate()
+        print("✅ Services stopped!")
+    
+    sys.exit(0)
+import numpy as np
+import joblib
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+import warnings
+import subprocess
+import threading
+import time
+import requests
+import json
+import os
+import sys
+warnings.filterwarnings('ignore')
+
+# Check if running with streamlit, if not, auto-launch with streamlit
+try:
+    from streamlit.runtime.scriptrunner import get_script_run_ctx
+    if get_script_run_ctx() is None and 'streamlit' not in sys.modules:
+        print("🚀 Auto-launching with Streamlit...")
+        print("� This will automatically create a public URL!")
+        import subprocess
+        import os
+        os.system(f"streamlit run {__file__} --server.port 8501 --server.address 0.0.0.0")
+        sys.exit(0)
+except ImportError:
+    pass
+
+# Auto-start ngrok tunnel
+def start_ngrok_tunnel(port=8501):
+    """
+    Automatically start ngrok tunnel and return the public URL
+    """
+    try:
+       
+ 
+        # Start ngrok in background
+        def run_ngrok():
+            subprocess.Popen(
+                ["ngrok", "http", str(port), "--log=stdout"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+        
+        # Start ngrok
+        ngrok_thread = threading.Thread(target=run_ngrok)
+        ngrok_thread.daemon = True
+        ngrok_thread.start()
+        
+        # Wait for ngrok to start and get URL
+        for attempt in range(10):  # Try for 10 seconds
+            time.sleep(1)
+            try:
+                response = requests.get("http://127.0.0.1:4040/api/tunnels")
+                if response.status_code == 200:
+                    tunnels = response.json()
+                    if tunnels.get('tunnels'):
+                        public_url = tunnels['tunnels'][0]['public_url']
+                        return public_url
+            except:
+                continue
+        
+        st.warning("⚠️ Could not create ngrok tunnel automatically. Please run 'ngrok http 8501' manually.")
+        return None
+        
+    except Exception as e:
+        st.warning(f"⚠️ Ngrok auto-start failed: {str(e)}")
+        st.info("💡 **Manual Setup:** Run 'ngrok http 8501' in a separate terminal")
+        return None
+
+# Initialize ngrok tunnel at startup (only when run with streamlit)
+def initialize_ngrok():
+    """Initialize ngrok tunnel only when running in Streamlit context"""
+    try:
+        # Check if we're running in Streamlit context
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+        if get_script_run_ctx() is None:
+            return  # Not running in Streamlit context, skip ngrok
+        
+        if 'ngrok_started' not in st.session_state:
+            st.session_state.ngrok_started = True
+            with st.spinner("🔄 Setting up public access..."):
+                public_url = start_ngrok_tunnel()
+    except:
+        # If we can't access Streamlit context, skip ngrok initialization
+        pass
+
+# Only initialize ngrok if we're in Streamlit context
+try:
+    initialize_ngrok()
+except:
+    pass
 
 # Page configuration
 st.set_page_config(
@@ -127,6 +300,9 @@ def make_prediction(model, features):
 
 # Main title and description
 st.title("❤️ Heart Disease Prediction Application")
+
+
+
 st.markdown("""
 This application uses machine learning to predict the risk of heart disease based on various health parameters.
 Please fill in your health information in the sidebar to get a prediction.
