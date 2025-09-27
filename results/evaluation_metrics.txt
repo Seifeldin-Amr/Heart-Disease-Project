@@ -1,0 +1,93 @@
+Heart Disease Prediction Model Evaluation Results
+==================================================
+
+FEATURE SELECTION APPROACH:
+------------------------------
+
+Logistic Regression:
+  Accuracy: 0.6066
+  Precision: 0.5336
+  Recall: 0.6066
+  F1_Score: 0.5559
+  ROC_AUC: 0.7825
+
+Decision Tree:
+  Accuracy: 0.4918
+  Precision: 0.5104
+  Recall: 0.4918
+  F1_Score: 0.4918
+  ROC_AUC: 0.5865
+
+Random Forest:
+  Accuracy: 0.5246
+  Precision: 0.4663
+  Recall: 0.5246
+  F1_Score: 0.4876
+  ROC_AUC: 0.7605
+
+SVM:
+  Accuracy: 0.5410
+  Precision: 0.4047
+  Recall: 0.5410
+  F1_Score: 0.4619
+  ROC_AUC: 0.7933
+
+
+PCA APPROACH:
+---------------
+
+Logistic Regression:
+  Accuracy: 0.5738
+  Precision: 0.4989
+  Recall: 0.5738
+  F1_Score: 0.5329
+  ROC_AUC: 0.8146
+
+Decision Tree:
+  Accuracy: 0.4918
+  Precision: 0.5371
+  Recall: 0.4918
+  F1_Score: 0.5109
+  ROC_AUC: 0.6091
+
+Random Forest:
+  Accuracy: 0.5738
+  Precision: 0.4282
+  Recall: 0.5738
+  F1_Score: 0.4880
+  ROC_AUC: 0.7236
+
+SVM:
+  Accuracy: 0.5574
+  Precision: 0.3999
+  Recall: 0.5574
+  F1_Score: 0.4643
+  ROC_AUC: 0.8023
+
+
+=== HYPERPARAMETER TUNING RESULTS ===
+Date: 2025-09-27 19:27:47
+
+Optimized Model Performance:
+                                          Accuracy  Precision  Recall  F1-Score  ROC-AUC
+Logistic Regression (GridSearchCV-FS)       0.6230     0.5203  0.6230    0.5460   0.8763
+Decision Tree (GridSearchCV-FS)             0.5082     0.4321  0.5082    0.4670   0.6434
+Random Forest (GridSearchCV-FS)             0.5410     0.4098  0.5410    0.4660   0.8086
+SVM (GridSearchCV-FS)                       0.5410     0.3798  0.5410    0.4463   0.7838
+Logistic Regression (GridSearchCV-PCA)      0.5738     0.4475  0.5738    0.4979   0.8773
+Decision Tree (GridSearchCV-PCA)            0.4754     0.5039  0.4754    0.4867   0.6955
+Random Forest (GridSearchCV-PCA)            0.5574     0.4208  0.5574    0.4782   0.7958
+SVM (GridSearchCV-PCA)                      0.6230     0.5715  0.6230    0.5880   0.8718
+Logistic Regression (RandomSearchCV-FS)     0.6230     0.5203  0.6230    0.5460   0.8763
+Decision Tree (RandomSearchCV-FS)           0.4918     0.3871  0.4918    0.4323   0.7134
+Random Forest (RandomSearchCV-FS)           0.5410     0.4190  0.5410    0.4720   0.7881
+SVM (RandomSearchCV-FS)                     0.5410     0.3944  0.5410    0.4554   0.7483
+Logistic Regression (RandomSearchCV-PCA)    0.5738     0.4475  0.5738    0.4979   0.8773
+Decision Tree (RandomSearchCV-PCA)          0.4754     0.5039  0.4754    0.4867   0.6955
+Random Forest (RandomSearchCV-PCA)          0.5574     0.3796  0.5574    0.4492   0.8202
+SVM (RandomSearchCV-PCA)                    0.6230     0.5715  0.6230    0.5880   0.8718
+
+Best Overall Model: Logistic Regression (GridSearchCV-FS)
+Best Accuracy: 0.6230
+Best F1-Score: 0.5880
+Best ROC-AUC: 0.8773
